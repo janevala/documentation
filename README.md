@@ -29,7 +29,7 @@ A Flutter (Dart) frontend application communicating with a Golang backend, both 
 - **HTTP Server**: Net/http stdlib or third-party framework
 - **Database**: PostgreSQL (`postgres://postgres:<pass>@host/homebedb?sslmode=disable`)
 - **Security**: 
-  - All endpoints require `code=123` query parameter for authentication
+  - Endpoints require JWT token in Authorization header
   - CORS enabled globally
 
 ### Data Layer
@@ -86,13 +86,12 @@ graph TB
 
 ### Backend API Endpoints (api-host:7071)
 
-All endpoints require authentication via `code=123` query parameter.
+Endpoints require authentication via JWT token in Authorization header.
 
 #### Content Management Endpoints
 - **GET /archive**
   - **Purpose**: Retrieve archived news items with pagination
   - **Parameters**: 
-    - `code=123` (required)
     - `offset` (optional, default: 0) - Pagination offset
     - `limit` (optional, default: 10) - Items per page
     - `lang` (optional) - Language filter
@@ -102,7 +101,6 @@ All endpoints require authentication via `code=123` query parameter.
 - **GET /search**
   - **Purpose**: Search news articles by query
   - **Parameters**:
-    - `code=123` (required)
     - `q` (required) - Search query string
     - `lang` (optional) - Language filter
   - **Response**: NewsItems object with search results
@@ -110,27 +108,24 @@ All endpoints require authentication via `code=123` query parameter.
 
 - **GET /refresh**
   - **Purpose**: Trigger refresh of RSS feeds/content
-  - **Parameters**: `code=123`
   - **Response**: Status code and data
   - **Used by**: `refresh()` method
 
 - **GET /sites**
   - **Purpose**: Retrieve RSS feed sites configuration
-  - **Parameters**: `code=123`
   - **Response**: RssSites object with available RSS sources
   - **Used by**: `sites()` method
 
 #### Configuration Endpoints
 - **GET /jq**
   - **Purpose**: Retrieve backend configuration
-  - **Parameters**: `code=123`
   - **Response**: Config object with backend settings
   - **Used by**: `getConfig()` method
 
 #### Authentication Endpoints
 - **POST /auth**
-  - **Purpose**: Mimic user login and token refresh
-  - **Response**: Token object with access token, refresh token, etc.
+  - **Purpose**: Authenticate user and obtain JWT token
+  - **Response**: Token object with JWT token and user information
   - **Used by**: `login()`, `refreshLogin()` methods
 
 ### Frontend API Implementation
@@ -139,13 +134,12 @@ The Flutter frontend uses the `ApiRepository` class with the following pattern:
 ```dart
 // All requests follow this structure:
 List<Future<dynamic>> futures = [];
-futures.add(client.get('/endpoint', parameters: {"code": "123"}));
+futures.add(client.get('/endpoint'));
 List<dynamic> results = await Future.wait(futures);
 ```
 
 **Key Implementation Details**:
 - Uses `Future.wait()` for concurrent request handling
-- All endpoints include `code=123` authentication parameter
 - Error handling with try-catch blocks and logging
 - Response parsing into strongly-typed Dart objects (PODOs)
 
@@ -160,7 +154,6 @@ List<dynamic> results = await Future.wait(futures);
 // Flutter frontend makes requests like:
 Dio().get(
   'http://0.0.0.0:7071/sites', 
-  queryParameters: { 'code': '123' }
 );
 ```
 
@@ -180,7 +173,7 @@ Dio().get(
 }
 ```
 
-**Authentication**: All requests require `code=123` query parameter (static/hardcoded auth)
+**Authentication**: All requests require JWT token in Authorization header (bearer token)
 
 ### Docker Container Communication
 
@@ -425,10 +418,7 @@ add_header Cross-Origin-Opener-Policy "same-origin" always;
 ## 8. Security Considerations
 
 ### Authentication
-**Token**: More secure implementation depending on content in future
-<!-- - **Backend**: All endpoints require `code=123` query parameter
-- **Frontend**: No client-side authentication (relies on backend)
-- **Database**: SSL disabled in connection string (`sslmode=disable`) -->
+**Token**: More secure implementation depending on needs in future
 
 ### CORS Configuration
 - Backend enables CORS for all origins (development mode)
@@ -629,25 +619,11 @@ HttpHandler → corsMiddleware → httpRouter → endpoint handlers
 #### Configuration Endpoint (`GET /jq`)
 **Purpose**: JSON-only system statistics for API consumption
 
-**Authentication**: Requires `code=123` query parameter
+**Authentication**: Requires JWT token in Authorization header
 
 **Response**: Same statistics as root endpoint in pure JSON format
 
-**Error Handling**: Returns HTTP 400 with "Invalid" response for missing/invalid code
-
-### Authentication System
-
-#### Code-Based Authentication
-**Mechanism**: Simple query parameter validation
-```go
-if !strings.Contains(req.URL.RawQuery, "code=123") {
-    w.WriteHeader(http.StatusBadRequest)
-    w.Write([]byte("Invalid"))
-    return
-}
-```
-
-**Applied to**: `/jq`, `/sites`, `/archive`, `/search`, `/refresh`
+**Error Handling**: Returns HTTP 400 with "Invalid" response for missing/invalid token
 
 ### CORS Implementation
 
