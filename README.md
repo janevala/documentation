@@ -96,7 +96,7 @@ Endpoints require authentication via JWT token in Authorization header.
     - `limit` (optional, default: 10) - Items per page
     - `lang` (optional) - Language filter
   - **Response**: NewsItems object with archived articles
-  - **Used by**: `archive()` method
+  <!-- - **Used by**: `archive()` method -->
 
 - **GET /search**
   - **Purpose**: Search news articles by query
@@ -104,29 +104,29 @@ Endpoints require authentication via JWT token in Authorization header.
     - `q` (required) - Search query string
     - `lang` (optional) - Language filter
   - **Response**: NewsItems object with search results
-  - **Used by**: `search()` method
+  <!-- - **Used by**: `search()` method -->
 
 - **GET /refresh**
   - **Purpose**: Trigger refresh of RSS feeds/content
   - **Response**: Status code and data
-  - **Used by**: `refresh()` method
+  <!-- - **Used by**: `refresh()` method -->
 
 - **GET /sites**
   - **Purpose**: Retrieve RSS feed sites configuration
   - **Response**: RssSites object with available RSS sources
-  - **Used by**: `sites()` method
+  <!-- - **Used by**: `sites()` method -->
 
 #### Configuration Endpoints
 - **GET /jq**
   - **Purpose**: Retrieve backend configuration
   - **Response**: Config object with backend settings
-  - **Used by**: `getConfig()` method
+  <!-- - **Used by**: `getConfig()` method -->
 
 #### Authentication Endpoints
 - **POST /auth**
   - **Purpose**: Authenticate user and obtain JWT token
   - **Response**: Token object with JWT token and user information
-  - **Used by**: `login()`, `refreshLogin()` methods
+  <!-- - **Used by**: `login()`, `refreshLogin()` methods -->
 
 ### Frontend API Implementation
 
