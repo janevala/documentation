@@ -23,7 +23,7 @@ A Flutter (Dart) frontend application communicating with a Golang backend, both 
 
 ### Backend (home_be)
 - **Language**: Go (Golang)
-- **Version**: 1.24.0
+- **Version**: 1.26.2
 - **Port**: 7071
 - **Container Name**: `api-host`
 - **HTTP Server**: Net/http stdlib or third-party framework
