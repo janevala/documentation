@@ -183,9 +183,15 @@ Dio().get(
 
 ---
 
-## 5. Frontend Stack & Dependencies
+## 5. Frontend & Backend Tooling
 
-### Core Flutter Packages
+### Build Outputs
+- Frontend: `build/web/`
+- Backend: Compiled binary `home_be_backend`
+
+### Frontend Stack & Dependencies
+
+#### Core Flutter Packages
 ```yaml
 # HTTP & Networking
 dio:                     # HTTP client for API calls
@@ -216,7 +222,7 @@ intl:                    # Internationalization utilities
 json_annotation:         # JSON serialization annotations
 ```
 
-### Development Dependencies
+#### Development Dependencies
 ```yaml
 # Code Generation & Build Tools
 json_serializable:       # JSON serialization code generator
@@ -224,6 +230,45 @@ build_runner:            # Code generation runner
 
 # Linting
 flutter_lints:           # Official Flutter linting rules
+```
+
+### Backend Stack & Dependencies
+
+#### Go Module Dependencies
+```bash
+github.com/mmcdole/gofeed      # RSS feed parsing
+github.com/google/uuid         # UUID generation
+github.com/lib/pq              # PostgreSQL driver
+github.com/rifaideen/talkative # Custom utility/library
+github.com/joho/godotenv       # Environment variable loader
+github.com/tailscale/hujson    # JSON parsing with pretty-print support
+```
+
+#### Makefile Targets
+- `make deps`    → Install vendor dependencies
+- `make`         → Build binary for current platform
+- `make debug`   → Debug build (with dev index.html)
+- `make release` → Production build (with release index.html)
+- `make clean`   → Clean build artifacts
+
+#### Build Modes
+
+**Debug Mode**:
+```bash
+make debug
+# Standard JS web build (without WASM)
+# Uses: index.debug.html
+# GOARCH detection for platform-specific builds
+# Command: flutter build web -t lib/main.dart --base-href / --dart-define=APP_VERSION=$(VERSION) --dart-define=APP_API=$(API)
+```
+
+**Release Mode**:
+```bash
+make release
+# WebAssembly (WASM) compilation for optimal performance
+# Uses: index.release.html
+# Production optimizations with WASM support
+# Command: flutter build web --wasm --release -t lib/main.dart --base-href / --dart-define=APP_VERSION=$(VERSION) --dart-define=APP_API=$(API)
 ```
 
 ---
@@ -324,47 +369,6 @@ class _AdaptMobile {
 - **Supported Locales**: German, English, Finnish, Portuguese, Thai
 - **Generated Localizations**: Automated code generation for type safety
 - **Dynamic Locale Switching**: Runtime language switching without app restart
-
----
-
-## 7. Backend Stack & Dependencies
-
-### Go Module Dependencies
-```bash
-github.com/mmcdole/gofeed      # RSS feed parsing
-github.com/google/uuid         # UUID generation
-github.com/lib/pq              # PostgreSQL driver
-github.com/rifaideen/talkative # Custom utility/library
-github.com/joho/godotenv       # Environment variable loader
-github.com/tailscale/hujson    # JSON parsing with pretty-print support
-```
-
-### Makefile Targets
-- `make deps`    → Install vendor dependencies
-- `make`         → Build binary for current platform
-- `make debug`   → Debug build (with dev index.html)
-- `make release` → Production build (with release index.html)
-- `make clean`   → Clean build artifacts
-
-### Build Modes
-
-**Debug Mode**:
-```bash
-make debug
-# Standard JS web build (without WASM)
-# Uses: index.debug.html
-# GOARCH detection for platform-specific builds
-# Command: flutter build web -t lib/main.dart --base-href / --dart-define=APP_VERSION=$(VERSION) --dart-define=APP_API=$(API)
-```
-
-**Release Mode**:
-```bash
-make release
-# WebAssembly (WASM) compilation for optimal performance
-# Uses: index.release.html
-# Production optimizations with WASM support
-# Command: flutter build web --wasm --release -t lib/main.dart --base-href / --dart-define=APP_VERSION=$(VERSION) --dart-define=APP_API=$(API)
-```
 
 ### WASM Compilation Benefits
 
@@ -743,9 +747,3 @@ Pipeline metrics and health status can be integrated with the existing monitorin
 
 ### Repository Links
 - **Frontend**:       https://github.com/janevala/home_fe
-- **Backend**:        https://github.com/janevala/home_be
-- **Translategemma**: https://ollama.com/library/translategemma
-
-### Build Outputs
-- Frontend: `build/web/`
-- Backend: Compiled binary `home_be_backend`
