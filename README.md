@@ -8,7 +8,7 @@ A Flutter (Dart) frontend application communicating with a Golang backend, both 
 
 ## 1. Application Layers
 
-### Frontend (home_fe)
+### Frontend
 - **Language**: Dart/Flutter
 - **Version**: >=3.41.5 (minimum required version)
 - **Port**: 7070
@@ -21,7 +21,7 @@ A Flutter (Dart) frontend application communicating with a Golang backend, both 
   - Localization support (English, Thai locales)
   - Image caching with thumbnail generation
 
-### Backend (home_be)
+### Backend
 - **Language**: Go (Golang)
 - **Version**: 1.26.2
 - **Port**: 7071
@@ -89,14 +89,20 @@ graph TB
 Endpoints require authentication via JWT token in Authorization header.
 
 #### Content Management Endpoints
-- **GET /archive**
-  - **Purpose**: Retrieve archived news items with pagination
+- **GET /articles**
+  - **Purpose**: Retrieve news items with pagination
   - **Parameters**: 
     - `offset` (optional, default: 0) - Pagination offset
     - `limit` (optional, default: 10) - Items per page
     - `lang` (optional) - Language filter
   - **Response**: NewsItems object with articles
   <!-- - **Used by**: `archive()` method -->
+
+- **GET /article**
+  - **Purpose**: Retrieve news item
+  - **Parameters**: 
+    - `lang` (optional) - Language filter
+  - **Response**: Individual NewsItem object
 
 - **GET /search**
   - **Purpose**: Search news articles by query
@@ -681,7 +687,7 @@ graph TB
 ### Integration Points
 
 #### Backend API Integration
-The crawler populates the same PostgreSQL database used by the main backend (`home_be`), enabling seamless integration with the frontend application through existing API endpoints.
+The crawler populates the same PostgreSQL database used by the main backend, enabling seamless integration with the frontend application through existing API endpoints.
 
 #### Translation API Consumption
 Frontend applications can access translated content through the standard backend API endpoints, with language selection handled by the existing internationalization system.
@@ -690,8 +696,3 @@ Frontend applications can access translated content through the standard backend
 Pipeline metrics and health status can be integrated with the existing monitoring dashboard for comprehensive system observability.
 
 ---
-
-## 12. Resources
-
-### Repository Links
-- **Frontend**:       https://github.com/janevala/home_fe
