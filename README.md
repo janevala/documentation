@@ -55,7 +55,7 @@ graph TB
             subgraph Docker["Docker\nContainer Runtime"]
                 subgraph Docker_Network["home-network"]
                     D["front-host\nFlutter Web App\nPort: 7070"]
-                    C["api-host\nGo HTTP Server\nPort: 7071\nAPI Endpoints:\n- /auth (POST)\n- /articles (GET)\n..."]
+                    C["api-host\nGo HTTP Server\nPort: 7071\nAPI Endpoints:\n- /auth (POST)\n..."]
                     E[(postgres-host\nPort: 5432\nDatabase: homebedb\nTables:\n- feed_items\n- feed_translations)]
                 end
             end
@@ -662,7 +662,6 @@ graph TB
 
 #### Resource Management
 - **Memory Constraints**: Text truncation prevents memory overflow during processing
-- **Concurrent Processing**: Goroutine-based execution for parallel feed processing
 - **Graceful Error Handling**: Continues processing individual items even if some fail
 
 ### Monitoring & Maintenance
@@ -674,23 +673,4 @@ graph TB
 
 #### Logging Strategy
 - **Timestamped Logs**: All operations include precise timing information
-- **Error Tracking**: Comprehensive error logging with context
 - **Progress Monitoring**: Item-by-item progress reporting during operations
-
-#### Data Retention
-- **Automatic Cleanup**: Configurable data retention policies
-- **Backup Strategy**: Compressed daily backups with offsite storage
-- **Migration Support**: Database schema versioning for upgrades
-
-### Integration Points
-
-#### Backend API Integration
-The crawler populates the same PostgreSQL database used by the main backend, enabling seamless integration with the frontend application through existing API endpoints.
-
-#### Translation API Consumption
-Frontend applications can access translated content through the standard backend API endpoints, with language selection handled by the existing internationalization system.
-
-#### Monitoring Integration
-Pipeline metrics and health status can be integrated with the existing monitoring dashboard for comprehensive system observability.
-
----
