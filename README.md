@@ -55,7 +55,7 @@ graph TB
             subgraph Docker["Docker\nContainer Runtime"]
                 subgraph Docker_Network["home-network"]
                     D["front-host\nFlutter Web App\nPort: 7070"]
-                    C["api-host\nGo HTTP Server\nPort: 7071\nAPI Endpoints:\n- /auth (POST)\n- /sites (GET)\n- /archive (GET)\n- /search (GET)\n- /refresh (GET)\n- /jq (GET)"]
+                    C["api-host\nGo HTTP Server\nPort: 7071\nAPI Endpoints:\n- /auth (POST)\n- /articles (GET)\n..."]
                     E["postgres-host\nPort: 5432\nDatabase: homebedb\nTables:\n- feed_items\n- feed_translations"]
                 end
             end
@@ -95,7 +95,7 @@ Endpoints require authentication via JWT token in Authorization header.
     - `offset` (optional, default: 0) - Pagination offset
     - `limit` (optional, default: 10) - Items per page
     - `lang` (optional) - Language filter
-  - **Response**: NewsItems object with archived articles
+  - **Response**: NewsItems object with articles
   <!-- - **Used by**: `archive()` method -->
 
 - **GET /search**
@@ -188,44 +188,42 @@ Dio().get(
 ### Core Flutter Packages
 ```yaml
 # HTTP & Networking
-dio: 5.9.2                     # HTTP client for API calls
-url_launcher: 6.3.2            # Open external links in browser/native apps
+dio:                     # HTTP client for API calls
+url_launcher:            # Open external links in browser/native apps
 
 # State Management & Navigation
-flutter_bloc: 9.1.1            # State management (Bloc pattern)
-go_router: 17.1.0              # Navigation/Router
+flutter_bloc:            # State management (Bloc pattern)
+go_router:               # Navigation/Router
 
 # UI & Media
-flutter_svg: 2.2.4             # SVG image support
-share_plus: 12.0.1             # Native share integration
+flutter_svg:             # SVG image support
+share_plus:              # Native share integration
 
 # Content Processing
-rss_dart: 1.0.14               # RSS feed parsing
-html: 0.15.6                   # HTML rendering for feed content
-timeago: 3.7.1                 # Relative time formatting ("2h ago")
+rss_dart:                # RSS feed parsing
+html:                    # HTML rendering for feed content
+timeago:                 # Relative time formatting ("2h ago")
 
 # Utilities & Storage
-collection: 1.19.1             # Utility collections and helpers
-logger: 2.7.0                  # Logging framework
-flutter_secure_storage: 10.0.0 # Secure storage for sensitive data
+collection:              # Utility collections and helpers
+logger:                  # Logging framework
+flutter_secure_storage:  # Secure storage for sensitive data
 
 # Internationalization
-intl: 0.20.2                   # Internationalization utilities
-flutter_localizations: sdk     # Flutter's built-in localizations
+intl:                    # Internationalization utilities
 
 # Code Generation
-json_annotation: 4.11.0        # JSON serialization annotations
+json_annotation:         # JSON serialization annotations
 ```
 
 ### Development Dependencies
 ```yaml
 # Code Generation & Build Tools
-json_serializable: 6.13.1      # JSON serialization code generator
-build_runner: 2.13.1           # Code generation runner
+json_serializable:       # JSON serialization code generator
+build_runner:            # Code generation runner
 
-# Testing & Linting
-flutter_test: sdk              # Flutter testing framework
-flutter_lints: 6.0.0           # Official Flutter linting rules
+# Linting
+flutter_lints:           # Official Flutter linting rules
 ```
 
 ---
@@ -250,9 +248,8 @@ bool get _usePortraitUi =>
 **Core Screens** (implemented in both orientations):
 - **LoginScreen** (`login_screen.dart`) - Authentication interface
 - **DashboardScreen** (`dashboard_screen.dart`) - Main navigation hub
-- **ArchiveScreen** (`archive_screen.dart`) - Historical news browsing
-- **SitesScreen** (`sites_screen.dart`) - RSS feed source management
-- **FeedScreen** (`feed_screen.dart`) - Individual RSS feed display
+- **ArticlesScreen** (`articles_screen.dart`) - Historical news browsing
+- **ArticleScreen** (`article_screen.dart`) - Individual news article view
 
 **Shared Components**:
 - **AnimatedFirst** (`animated_first.dart`) - App introduction/branding
@@ -278,7 +275,8 @@ final GoRouter router = GoRouter(
 **Route Structure**:
 - `/` - Login screen (auto-selects orientation)
 - `/dashboard` - Main dashboard
-- `/archive` - News archive browser
+- `/articles` - News articles browser
+- `/article/:id` - News article detail view
 - `/sites` - RSS site management
 <!-- - `/site` - Individual feed view (passes RSS site data) -->
 
@@ -310,31 +308,16 @@ class _AdaptMobile {
 }
 ```
 
-**View Current Theme**:
-- [Link](lib/theme/theme.dart)
-
 ### State Management Integration
 
 **Bloc Pattern Implementation**:
 - **ThemeCubit**: Theme switching (light/dark mode)
+- **ModeCubit**: App mode (heavy/very heavy)
 - **LocaleCubit**: Language/locale management
 - **LoginBloc**: Authentication state
-- **RssArchiveBloc**: News feed state management
-- **RssSitesBloc**: RSS source configuration
-
-**Widget Tree Structure**:
-```dart
-MultiBlocProvider(
-  providers: [
-    BlocProvider<ThemeCubit>(create: (context) => ThemeCubit()),
-    BlocProvider<LocaleCubit>(create: (context) => LocaleCubit()),
-    BlocProvider<LoginBloc>(create: (context) => LoginBloc(...)),
-    BlocProvider<RssArchiveBloc>(create: (context) => RssArchiveBloc(...)),
-    BlocProvider<RssSitesBloc>(create: (context) => RssSitesBloc(...)),
-  ],
-  child: App(), // MaterialApp.router with theme/locale support
-)
-```
+- **DrawerBloc**: Drawer state management
+- **ArticlesBloc**: News list screen state management
+- **ArticleBloc**: News article detail screen state management
 
 ### Internationalization Architecture
 
@@ -346,7 +329,7 @@ MultiBlocProvider(
 
 ## 7. Backend Stack & Dependencies
 
-### Go Module Dependencies (from Makefile)
+### Go Module Dependencies
 ```bash
 github.com/mmcdole/gofeed      # RSS feed parsing
 github.com/google/uuid         # UUID generation
@@ -357,12 +340,10 @@ github.com/tailscale/hujson    # JSON parsing with pretty-print support
 ```
 
 ### Makefile Targets
-- `make dep`     → Install vendor dependencies
-- `make vet`     → Run go vet linter
-- `make build`   → Build binary for current platform
+- `make deps`    → Install vendor dependencies
+- `make`         → Build binary for current platform
 - `make debug`   → Debug build (with dev index.html)
 - `make release` → Production build (with release index.html)
-- `make run`     → Run local development server
 - `make clean`   → Clean build artifacts
 
 ### Build Modes
@@ -399,7 +380,7 @@ make release
 - **Mobile optimization**: Enhanced performance on mobile devices
 
 **Nginx Configuration**:
-The included Nginx configuration (`nginx.https_wasm.conf`) includes:
+The included Nginx configuration (`nginx.release.conf`) includes:
 - Proper MIME type for `.wasm` files
 - CORS headers for WASM module loading
 - Security headers compatible with WASM execution
@@ -517,7 +498,7 @@ The backend provides real-time database statistics through the `/jq` endpoint:
 ### Performance Considerations
 
 #### Query Optimization
-- Pagination support for archive endpoints (`offset`, `limit` parameters)
+- Pagination support for articles endpoints (`offset`, `limit` parameters)
 - Language-based filtering for multilingual content
 - Chronological ordering for news display
 
@@ -574,7 +555,7 @@ CREATE INDEX idx_translations_translated_at ON feed_translations(translated_at);
 ### Database Access Patterns
 
 #### Read Operations
-- **Archive queries**: Paginated retrieval with language filtering
+- **Articles queries**: Paginated retrieval with language filtering
 - **Search operations**: Full-text search across titles and content
 - **Configuration retrieval**: RSS site configuration management
 
@@ -599,41 +580,28 @@ CREATE INDEX idx_translations_translated_at ON feed_translations(translated_at);
 
 ## 10. API Implementation Details
 
-### HTTP Server Architecture
+### Server Setup
 
-#### Server Configuration
 - **Framework**: Standard Go `net/http` package
 - **Router**: `http.NewServeMux()` for route handling
 - **Port**: Configurable via `config.json` (default: `:7071`)
 - **Timeouts**: 30 seconds for both read and write operations
 - **Graceful Shutdown**: 5-second timeout with signal handling
 
-#### Middleware Stack
+### Middleware Order
+
+Requests pass through the backend in this order:
+
 ```go
-// Request flow: Request → CORS Middleware → HTTP Stats → Route Handler
-HttpHandler → corsMiddleware → httpRouter → endpoint handlers
+Request -> HTTP server -> corsMiddleware -> httpRouter -> endpoint handler
 ```
 
-### Endpoint Implementation
-
-#### Configuration Endpoint (`GET /jq`)
-**Purpose**: JSON-only system statistics for API consumption
-
-**Authentication**: Requires JWT token in Authorization header
-
-**Response**: Same statistics as root endpoint in pure JSON format
-
-**Error Handling**: Returns HTTP 400 with "Invalid" response for missing/invalid token
-
-### CORS Implementation
-
-#### Middleware Configuration
-**Preflight**: Automatic OPTIONS request handling
+The CORS middleware applies headers before route handling and short-circuits preflight requests:
 
 ```go
 func corsMiddleware(next http.Handler) http.Handler {
     return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-        w.Header().Set("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
+        w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
         w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
         w.Header().Set("Access-Control-Allow-Origin", "https://techeavy.news")
         
@@ -646,94 +614,23 @@ func corsMiddleware(next http.Handler) http.Handler {
 }
 ```
 
-### Request Processing Pipeline
+### Route Registration Pattern
 
-#### Handler Registration
 ```go
-// Route registration pattern
 httpRouter.HandleFunc("GET /endpoint", handler)
-httpRouter.HandleFunc("OPTIONS /endpoint", handler) // CORS support
+httpRouter.HandleFunc("OPTIONS /endpoint", handler)
 
-// Apply CORS middleware to all routes
 corsRouter := corsMiddleware(httpRouter)
 http.Handle("/endpoint", corsRouter)
 ```
 
-#### Request Flow
-1. **Incoming Request** → HTTP Server
-2. **Logging** → Request method, path, query parameters logged
-3. **Statistics** → Request start time recorded
-4. **CORS** → Headers applied, OPTIONS handled
-5. **Authentication** → Code validation where required
-6. **Business Logic** → Endpoint-specific processing
-7. **Response** → Headers set, content written
-8. **Statistics** → Response time and status recorded
-
-### Error Handling Patterns
-
-#### Standardized Error Responses
-```go
-// Authentication failure
-w.WriteHeader(http.StatusBadRequest)
-w.Write([]byte("Invalid"))
-
-// Template errors
-http.Error(w, "Could not load template", http.StatusInternalServerError)
-
-// Database errors (handled in API layer)
-// Logged via B.LogErr(err)
-```
-
-### Content Management Endpoints
-
-#### Sites Handler (`GET /sites`)
-**Implementation**: `Api.SitesHandler(cfg.Sites)`
-**Purpose**: RSS feed configuration retrieval
-**Response**: `RssSites` object from `config.json`
-
-#### Archive Handler (`GET /archive`)
-**Implementation**: `Api.ArchiveHandler(db)`
-**Purpose**: Paginated news retrieval
-**Parameters**: `code`, `offset`, `limit`, `lang`
-**Response**: `NewsItems` object with pagination
-
-#### Search Handler (`GET /search`)
-**Implementation**: `Api.SearchHandler(db)`
-**Purpose**: Full-text search across feed items
-**Parameters**: `code`, `q` (query), `lang`
-**Response**: `NewsItems` object with search results
-
-#### Refresh Handler (`GET /refresh`)
-**Implementation**: `Api.ArchiveRefreshHandler(cfg.Sites, db)`
-**Purpose**: Trigger RSS feed refresh
-**Parameters**: `code`
-**Response**: Status information
-
-### Performance Optimizations
-
-#### Connection Reuse
-- HTTP server with persistent connections
-- Database connection pooling
-- Efficient request routing
-
-#### Memory Management
-- Request body streaming where possible
-- Efficient JSON serialization
-- Garbage collection optimization
-
-#### Concurrent Processing
-- Goroutine-based request handling
-- Non-blocking I/O operations
-- Lock-free statistics collection where possible
+Each API route is registered on the `ServeMux`, then wrapped by the shared CORS middleware before being attached to the default HTTP handler.
 
 ### Development vs Production Differences
 
-#### Build Tags
 - **Debug**: `-tags debug` with development index.html
 - **Release**: `-tags release` with production index.html
 - **Version Injection**: Build-time version information
-
-#### Configuration Differences
 - **Development**: Local database, relaxed CORS
 - **Production**: Remote database, restricted CORS
 - **Logging**: Verbose development vs minimal production logs
