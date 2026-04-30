@@ -109,12 +109,7 @@ Endpoints require authentication via JWT token in Authorization header.
 - **GET /refresh**
   - **Purpose**: Trigger refresh of RSS feeds/content
   - **Response**: Status code and data
-  <!-- - **Used by**: `refresh()` method -->
-
-- **GET /sites**
-  - **Purpose**: Retrieve RSS feed sites configuration
-  - **Response**: RssSites object with available RSS sources
-  <!-- - **Used by**: `sites()` method -->
+  - **Used by**: Editors only (not readers)
 
 #### Configuration Endpoints
 - **GET /jq**
@@ -189,86 +184,41 @@ Dio().get(
 - Frontend: `build/web/`
 - Backend: Compiled binary `home_be_backend`
 
-### Frontend Stack & Dependencies
-
-#### Core Flutter Packages
-```yaml
-# HTTP & Networking
-dio:                     # HTTP client for API calls
-url_launcher:            # Open external links in browser/native apps
-
-# State Management & Navigation
-flutter_bloc:            # State management (Bloc pattern)
-go_router:               # Navigation/Router
-
-# UI & Media
-flutter_svg:             # SVG image support
-share_plus:              # Native share integration
-
-# Content Processing
-rss_dart:                # RSS feed parsing
-html:                    # HTML rendering for feed content
-timeago:                 # Relative time formatting ("2h ago")
-
-# Utilities & Storage
-collection:              # Utility collections and helpers
-logger:                  # Logging framework
-flutter_secure_storage:  # Secure storage for sensitive data
-
-# Internationalization
-intl:                    # Internationalization utilities
-
-# Code Generation
-json_annotation:         # JSON serialization annotations
-```
-
-#### Development Dependencies
-```yaml
-# Code Generation & Build Tools
-json_serializable:       # JSON serialization code generator
-build_runner:            # Code generation runner
-
-# Linting
-flutter_lints:           # Official Flutter linting rules
-```
-
-### Backend Stack & Dependencies
-
-#### Go Module Dependencies
-```yaml
-github.com/mmcdole/gofeed      # RSS feed parsing
-github.com/google/uuid         # UUID generation
-github.com/lib/pq              # PostgreSQL driver
-github.com/rifaideen/talkative # Custom utility/library
-github.com/joho/godotenv       # Environment variable loader
-github.com/tailscale/hujson    # JSON parsing with pretty-print support
-```
-
-#### Makefile Targets
+### Makefile Targets
 - `make deps`    → Install vendor dependencies
 - `make`         → Build binary for current platform
 - `make debug`   → Debug build (with dev index.html)
 - `make release` → Production build (with release index.html)
 - `make clean`   → Clean build artifacts
 
-#### Build Modes
-
-**Debug Mode**:
-```bash
-make debug
-# Standard JS web build (without WASM)
-# Uses: index.debug.html
-# GOARCH detection for platform-specific builds
-# Command: flutter build web -t lib/main.dart --base-href / --dart-define=APP_VERSION=$(VERSION) --dart-define=APP_API=$(API)
+### Frontend Dependencies
+```yaml
+dio:                          # HTTP client for API calls
+url_launcher:                 # Open external links in browser/native apps
+flutter_bloc:                 # State management (Bloc pattern)
+go_router:                    # Navigation/Router
+flutter_svg:                  # SVG image support
+share_plus:                   # Native share integration
+rss_dart:                     # RSS feed parsing
+html:                         # HTML rendering for feed content
+timeago:                      # Relative time formatting ("2h ago")
+collection:                   # Utility collections and helpers
+logger:                       # Logging framework
+flutter_secure_storage:       # Secure storage for sensitive data in prod builds
+shared_preferencies:          # Non-secure storage for debug builds
+intl:                         # Internationalization utilities
+json_annotation:              # JSON serialization annotations
 ```
 
-**Release Mode**:
-```bash
-make release
-# WebAssembly (WASM) compilation for optimal performance
-# Uses: index.release.html
-# Production optimizations with WASM support
-# Command: flutter build web --wasm --release -t lib/main.dart --base-href / --dart-define=APP_VERSION=$(VERSION) --dart-define=APP_API=$(API)
+### Backend Dependencies
+```yaml
+github.com/golang-jwt/jwt/v5  # JWT authentication
+github.com/google/uuid        # UUID generation
+github.com/joho/godotenv      # Environment variable loader
+github.com/lib/pq             # PostgreSQL driver
+github.com/mmcdole/gofeed     # RSS feed parsing
+github.com/tailscale/hujson   # Human-friendly JSON parsing
+golang.org/x/crypto           # Cryptographic utilities
 ```
 
 ---
