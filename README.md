@@ -320,7 +320,7 @@ class _AdaptMobile {
 
 ### Internationalization Architecture
 
-- **Supported Locales**: German, English, Finnish, Portuguese, Thai
+- **Supported Locales**: German, Russian, English, Finnish, Portuguese, Spanish, Thai, Japanese
 - **Generated Localizations**: Automated code generation for type safety
 - **Dynamic Locale Switching**: Runtime language switching without app restart
 
