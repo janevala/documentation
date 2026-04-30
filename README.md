@@ -235,7 +235,7 @@ flutter_lints:           # Official Flutter linting rules
 ### Backend Stack & Dependencies
 
 #### Go Module Dependencies
-```bash
+```yaml
 github.com/mmcdole/gofeed      # RSS feed parsing
 github.com/google/uuid         # UUID generation
 github.com/lib/pq              # PostgreSQL driver
