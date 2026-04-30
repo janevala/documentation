@@ -292,15 +292,13 @@ bool get _usePortraitUi =>
 
 **Core Screens** (implemented in both orientations):
 - **LoginScreen** (`login_screen.dart`) - Authentication interface
-- **DashboardScreen** (`dashboard_screen.dart`) - Main navigation hub
 - **ArticlesScreen** (`articles_screen.dart`) - Historical news browsing
 - **ArticleScreen** (`article_screen.dart`) - Individual news article view
-
-**Shared Components**:
-- **AnimatedFirst** (`animated_first.dart`) - App introduction/branding
-- **AnimatedFlags** (`animated_flags.dart`) - Locale selection with flag animations
 - **ListTile** (`list_tile.dart`) - Consistent list item styling
-- **Spinner** (`spinner.dart`) - Loading state indicator
+
+**Editor Screens** (implemented in both orientations):
+- **DashboardScreen** (`dashboard_screen.dart`) - Editors navigation hub
+- **AnimatedFlags** (`animated_flags.dart`) - Locale selection with flag animations
 
 ### Navigation System
 
