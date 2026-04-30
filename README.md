@@ -276,8 +276,6 @@ final GoRouter router = GoRouter(
 - `/dashboard` - Main dashboard
 - `/articles` - News articles browser
 - `/article/:id` - News article detail view
-- `/sites` - RSS site management
-<!-- - `/site` - Individual feed view (passes RSS site data) -->
 
 ### Theme System
 
@@ -607,7 +605,7 @@ The news feed processing pipeline is a standalone service responsible for aggreg
 graph TB
     subgraph Docker_Network["home-network"]
         Crawler["crawler container\nGo Service\nModes: crawl / translate / ssh\nControl: config.json & pipeline.sh"]
-        Postgres["postgres-host\nPostgreSQL\nDatabase: homebedb"]
+        Postgres[(postgres-host\nPostgreSQL\nDatabase: homebedb)]
         Ollama["ollama container\nAI Translations\nLLM: optimizedgemma-12b"]
     end
         
