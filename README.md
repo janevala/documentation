@@ -56,7 +56,7 @@ graph TB
                 subgraph Docker_Network["home-network"]
                     D["front-host\nFlutter Web App\nPort: 7070"]
                     C["api-host\nGo HTTP Server\nPort: 7071\nAPI Endpoints:\n- /auth (POST)\n- /articles (GET)\n..."]
-                    E["postgres-host\nPort: 5432\nDatabase: homebedb\nTables:\n- feed_items\n- feed_translations"]
+                    E[(postgres-host\nPort: 5432\nDatabase: homebedb\nTables:\n- feed_items\n- feed_translations)]
                 end
             end
         end
