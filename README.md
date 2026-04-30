@@ -355,7 +355,7 @@ add_header Cross-Origin-Opener-Policy "same-origin" always;
 ## 8. Security Considerations
 
 ### Authentication
-**Token**: More secure implementation depending on needs in future
+**Username**: More secure implementation depending on needs in future
 
 ### CORS Configuration
 - Backend enables CORS for all origins (development mode)
