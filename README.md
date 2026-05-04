@@ -593,52 +593,29 @@ Each API route is registered on the `ServeMux`, then wrapped by the shared CORS 
 
 ---
 
-## 11. News Feed Processing & Translation Pipeline
+## 11. News Processing & Translation Pipeline
 
 ### Overview
 
-The news feed processing pipeline is a standalone service responsible for aggregating news feeds from multiple sources and generating multilingual translations using custom Ollama AI models.
+The news feed processing pipeline is a standalone service responsible for aggregating news from multiple sources and generating multilingual translations using custom Ollama AI models.
 
-### Pipeline Architecture
+### Components
 
-```mermaid
-graph TB
-    subgraph Docker_Network["home-network"]
-        Crawler["crawler container\nGo Service\nModes: crawl / translate / ssh\nControl: config.json & pipeline.sh"]
-        Postgres[(postgres-host\nPostgreSQL\nDatabase: homebedb)]
-        Ollama["ollama container\nAI Translations\nLLM: optimizedgemma-12b"]
-    end
-        
-    subgraph RSS_Sources["External Feeds"]
-        Feed1["Feed 1"]
-        FeedN["Feed n"]
-    end
-
-    
-    RSS_Sources --> Crawler
-    Crawler --> Postgres
-    Crawler --> Ollama
-    Ollama --> Crawler
-    Crawler --> Postgres
-```
-
-### Core Components
-
-#### News Feed Crawling
+#### News Crawling
 
 **Data Processing:**
 - News feeds parsed using `gofeed` library
 - Content deduplication via UUID-based hashing
 - Text truncation (title: 450 chars, description: 950 chars)
 - Chronological sorting by publication date
-- Automatic thumbnail extraction and fallback handling
+- Website scraping for additional content
 
 #### AI Translation System
 
 **Translation Model:**
 - **Model**: `optimizedgemma-12b` (custom fine-tuned Gemma 12B)
-- **Temperature**: 0.4 (reduced creativity for consistent translations)
-- **Context Length**: 1024 / 2048 (pipeline doesn't use chat history)
+- **Temperature**: 0.4 (reduced creativity for consistency and speed)
+- **Context Length**: 1024 tokens (pipeline doesn't use chat history)
 
 **Translation Logic:**
 - Professional translation prompts with technical term preservation
