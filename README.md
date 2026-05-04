@@ -613,23 +613,22 @@ The news feed processing pipeline is a standalone service responsible for aggreg
 #### AI Translation System
 
 **Translation Model:**
-- **Model**: `optimizedgemma-12b` (custom fine-tuned Gemma 12B)
+- **Model**: `optimizedgemma-12b`
 - **Temperature**: 0.4 (reduced creativity for consistency and speed)
 - **Context Length**: 1024 tokens (pipeline doesn't use chat history)
 
 **Translation Logic:**
 - Professional translation prompts with technical term preservation
-- Fallback to title translation when description is empty
 - Content filtering (removes URLs, comment references)
 - Duplicate translation prevention via database constraints
 
 ### Performance Optimizations
 
 #### Translation Efficiency
-- **Model Optimization**: Custom fine-tuned Gemma 12B model
+- **Model Optimization**: Custom fine-tuned Google's Translate Gemma 12B model
 - **Batch Processing**: Processes items in configurable batches
 - **Connection Pooling**: Reuses Ollama client connections for multiple translations
-- **Content Preprocessing**: Filters out URLs and metadata to reduce token usage
+- **Content Preprocessing**: Filters out URLs and metadata for content consistency
 
 #### Database Performance
 - **UUID Indexing**: Fast duplicate detection using UUID-based content hashing
@@ -647,7 +646,3 @@ The news feed processing pipeline is a standalone service responsible for aggreg
 - **Ollama Service**: Verifies AI service availability before translation
 - **Database Connectivity**: Tests PostgreSQL connection before operations
 - **Feed Availability**: Logs failed RSS feed fetches for monitoring
-
-#### Logging Strategy
-- **Timestamped Logs**: All operations include precise timing information
-- **Progress Monitoring**: Item-by-item progress reporting during operations
