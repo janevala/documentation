@@ -16,9 +16,9 @@ A Flutter (Dart) frontend application communicating with a Golang backend, both 
 - **Reverse Proxy**: Nginx (HTTPS via Caddy config)
 - **Architecture**: Mobile/Desktop/Web hybrid app
 - **Key Features**: 
-  - RSS feed aggregation and display
+  - News feed aggregation and display
   - Multi-platform support (iOS, Android, Desktop)
-  - Localization support (English, Thai locales)
+  - Localization support (English, Thai, Japanese, Finnish...)
   - Image caching with thumbnail generation
 
 ### Backend
@@ -113,7 +113,7 @@ Endpoints require authentication via JWT token in Authorization header.
   <!-- - **Used by**: `search()` method -->
 
 - **GET /refresh**
-  - **Purpose**: Trigger refresh of RSS feeds/content
+  - **Purpose**: Trigger refresh of news feeds/content
   - **Response**: Status code and data
   - **Used by**: Editors only (not readers)
 
@@ -383,7 +383,7 @@ add_header Cross-Origin-Opener-Policy "same-origin" always;
 ### Core Tables
 
 #### `feed_items`
-Stores RSS feed articles and news items.
+Stores news feed articles and news items.
 
 **Columns**:
 ```sql
@@ -442,7 +442,7 @@ The backend provides real-time database statistics through the `/jq` endpoint:
 ### Database Operations
 
 #### Content Management
-- RSS feed parsing and insertion via `gofeed` library
+- News feed parsing and insertion via `gofeed` library
 - Automatic duplicate detection based on link uniqueness
 - Timestamp management for published vs created dates
 
@@ -645,4 +645,3 @@ The news feed processing pipeline is a standalone service responsible for aggreg
 #### Health Checks
 - **Ollama Service**: Verifies AI service availability before translation
 - **Database Connectivity**: Tests PostgreSQL connection before operations
-- **Feed Availability**: Logs failed RSS feed fetches for monitoring
