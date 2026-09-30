@@ -271,7 +271,7 @@ A Go sidecar on port 8070 renders server-side HTML for `/article/*` when the req
 ### CORS
 - Allowed methods: GET, POST, PUT, DELETE, OPTIONS
 - Allowed headers: `Content-Type, Authorization`
-- Origin: `*` in debug builds; `https://techeavy.news` in release builds
+- Origin: `*` in debug builds; `https://example.com` in release builds
 - Preflight requests short-circuit with 204
 
 ### Server Hardening
@@ -295,11 +295,11 @@ id               SERIAL PRIMARY KEY,
 title            VARCHAR(1000) NOT NULL,
 description      VARCHAR(2000) NOT NULL,
 content          VARCHAR(3000),
-link             VARCHAR(500) NOT NULL,
+link             VARCHAR(1500) NOT NULL,
 published        TIMESTAMP NOT NULL,
 published_parsed TIMESTAMP NOT NULL,
 source           VARCHAR(300) NOT NULL,
-thumbnail        VARCHAR(500),
+thumbnail        VARCHAR(1500),
 uuid             VARCHAR(300) NOT NULL UNIQUE,
 language         VARCHAR(10) NOT NULL,
 created          TIMESTAMP DEFAULT NOW(),
